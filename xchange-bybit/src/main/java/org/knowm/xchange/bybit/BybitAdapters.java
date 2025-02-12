@@ -65,11 +65,13 @@ public class BybitAdapters {
   public static Wallet adaptBybitBalances(List<BybitCoinWalletBalance> coinWalletBalances) {
     List<Balance> balances = new ArrayList<>(coinWalletBalances.size());
     for (BybitCoinWalletBalance bybitCoinBalance : coinWalletBalances) {
+      BigDecimal available = bybitCoinBalance.getAvailableToWithdraw() == null || bybitCoinBalance.getAvailableToWithdraw().isEmpty() ?
+          BigDecimal.ZERO : new BigDecimal(bybitCoinBalance.getAvailableToWithdraw());
       balances.add(
           new Balance(
               new Currency(bybitCoinBalance.getCoin()),
               new BigDecimal(bybitCoinBalance.getEquity()),
-              new BigDecimal(bybitCoinBalance.getAvailableToWithdraw())));
+              available));
     }
     return Wallet.Builder.from(balances).build();
   }
